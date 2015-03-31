@@ -1,0 +1,13 @@
+{
+  "queryType": "groupBy",
+  "dataSource": "example-druid",
+  "granularity": "minute",
+  "dimensions": ["zone_id"],
+  "aggregations": [
+    { "type": "count", "name": "rows" },
+    { "type": "longSum", "fieldName": "requestsSum", "name": "requests" },
+    { "type": "longSum", "fieldName": "bytesClientSum", "name": "bytes_client" },
+    { "type": "longSum", "fieldName": "bytesOriginSum", "name": "bytes_origin" }
+  ],
+  "intervals": ["2015-01-01T00:00/2020-01-01T00"]
+}

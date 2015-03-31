@@ -1,0 +1,74 @@
+zk:
+  image: bobrik/zookeeper
+  ports:
+    - 2181:2181
+  environment:
+    ZK_ID: 1
+    ZK_CONFIG: tickTime=2000,initLimit=10,syncLimit=5,maxClientCnxns=1024,forceSync=no,clientPort=2181
+  volumes:
+    - /var/lib/zookeeper:/var/lib/zookeper
+
+mysql:
+  image: mysql:5.7
+  ports:
+    - 3306:3306
+  environment:
+    MYSQL_ROOT_PASSWORD: haha
+    MYSQL_DATABASE: druid
+    MYSQL_USER: druid
+    MYSQL_PASSWORD: druid
+  volumes:
+    - /var/lib/mysql:/var/lib/mysql
+
+kafka:
+  image: wurstmeister/kafka:0.8.2.0
+  ports:
+    - 9092:9092
+  links:
+    - zk:zk
+  environment:
+    KAFKA_ADVERTISED_HOST_NAME: 192.168.59.103
+    KAFKA_ADVERTISED_PORT: 9092
+    KAFKA_ZOOKEEPER_CONNECT: 192.168.59.103:2181
+  volumes:
+    - /var/lib/kafka:/kafka
+
+coordinator:
+  image: bobrik/mesos-druid-coordinator:0.7.0
+  net: host
+  environment:
+    HOST: 192.168.59.103
+    PORT: 8001
+    DRUID_MEMORY_LIMIT: 256m
+
+historical:
+  image: bobrik/mesos-druid-historical:0.7.0
+  net: host
+  environment:
+    HOST: 192.168.59.103
+    PORT: 8011
+    DRUID_MEMORY_LIMIT: 512m
+
+broker:
+  image: bobrik/mesos-druid-broker:0.7.0
+  net: host
+  environment:
+    HOST: 192.168.59.103
+    PORT: 8031
+    DRUID_MEMORY_LIMIT: 512m
+
+realtime:
+  image: bobrik/mesos-druid-realtime:0.7.0
+  net: host
+  environment:
+    HOST: 192.168.59.103
+    PORT: 8021
+    DRUID_MEMORY_LIMIT: 512m
+
+overlord:
+  image: bobrik/mesos-druid-overlord:0.7.0
+  net: host
+  environment:
+    HOST: 192.168.59.103
+    PORT: 8041
+    DRUID_MEMORY_LIMIT: 512m

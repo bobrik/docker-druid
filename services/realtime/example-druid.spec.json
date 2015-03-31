@@ -1,0 +1,75 @@
+[
+  {
+    "dataSchema": {
+      "dataSource": "example-druid",
+      "parser": {
+        "type": "string",
+        "parseSpec": {
+          "format": "json",
+          "timestampSpec": {
+            "column": "timestamp",
+            "format": "auto"
+          },
+          "dimensionsSpec": {
+            "dimensions": [
+              "zone_id",
+              "requests",
+              "bytes_client",
+              "bytes_origin"
+            ],
+            "dimensionExclusions": [],
+            "spatialDimensions": []
+          }
+        }
+      },
+      "metricsSpec": [
+        {
+          "type": "longSum",
+          "name": "requestsSum",
+          "fieldName": "requests"
+        },
+        {
+          "type": "longSum",
+          "name": "bytesClientSum",
+          "fieldName": "bytes_client"
+        },
+        {
+          "type": "longSum",
+          "name": "bytesOriginSum",
+          "fieldName": "bytes_origin"
+        }
+      ],
+      "granularitySpec": {
+        "type": "uniform",
+        "segmentGranularity": "MINUTE",
+        "queryGranularity": "NONE"
+      }
+    },
+    "ioConfig": {
+      "type": "realtime",
+      "firehose": {
+        "type": "kafka-0.8",
+        "consumerProps": {
+          "zookeeper.connect": "192.168.59.103:2181",
+          "zookeeper.connection.timeout.ms": "15000",
+          "zookeeper.session.timeout.ms": "15000",
+          "zookeeper.sync.time.ms": "5000",
+          "group.id": "example-druid",
+          "fetch.message.max.bytes": "1048586",
+          "auto.offset.reset": "largest",
+          "auto.commit.enable": "false"
+        },
+        "feed": "example-druid"
+      },
+      "plumber": {
+        "type": "realtime"
+      }
+    },
+    "tuningConfig": {
+      "type": "realtime",
+      "maxRowsInMemory": 500000,
+      "intermediatePersistPeriod": "PT1m",
+      "windowPeriod": "PT2m"
+    }
+  }
+]
