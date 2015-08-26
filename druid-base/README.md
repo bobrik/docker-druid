@@ -33,7 +33,7 @@ name. For example `druid.storage.type=local` can be passed as
 Example image for coordinator node:
 
 ```
-FROM bobrik/druid-base:0.7.0
+FROM bobrik/druid-base:0.8.0
 
 ADD ./runtime.properties /opt/druid/config/coordinator/runtime.properties
 
